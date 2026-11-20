@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPO Boss Timers - Giờ Việt Nam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #ff6eb4;
+      --light-pink: #ffb3d9;
+      --dark-pink: #cc3380;
+      --bg: #1a0a1a;
+      --card-bg: #0a0a0a;
+      --border: #ff6eb4;
+      --text: #ffe0f0;
+      --green: #39ff14;
+      --yellow: #ffe657;
+      --cyan: #00ffff;
+      --red: #ff4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #000;
+      font-family: 'VT323', monospace;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 10px 40px;
+    }
+
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 700px; }
+
+    /* Maid character top */
+    .maid-top {
+      display: block;
+      margin: 0 auto 10px;
+      width: 120px;
+      height: 120px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(14px, 3.5vw, 22px);
+      color: var(--pink);
+      text-shadow: 0 0 10px var(--pink), 0 0 20px var(--dark-pink);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      color: var(--light-pink);
+      opacity: 0.85;
+    }
+
+    .sync-info {
+      display: inline-block;
+      background: rgba(255,110,180,0.15);
+      border: 1px solid var(--pink);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 18px;
+      color: var(--cyan);
+      margin-top: 8px;
+    }
+
+    /* Clock */
+    .live-clock {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 32px;
+      color: var(--yellow);
+      text-shadow: 0 0 8px var(--yellow);
+      letter-spacing: 2px;
+    }
+
+    .live-clock span { font-size: 20px; color: var(--light-pink); display: block; margin-top: 2px; }
+
+    /* Cards */
+    .boss-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 18px;
+      box-shadow: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .boss-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--pink), transparent);
+    }
+
+    .boss-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .boss-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(10px, 2.5vw, 14px);
+      color: var(--pink);
+      text-shadow: 0 0 6px var(--pink);
+    }
+
+    .boss-schedule {
+      font-size: 18px;
+      color: var(--light-pink);
+      opacity: 0.75;
+    }
+
+    .timers-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .timer-block {
+      background: #000;
+      border: 1px solid rgba(255,110,180,0.3);
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .timer-label {
+      font-size: 16px;
+      color: var(--light-pink);
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+
+    .timer-value {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(12px, 3vw, 18px);
+      color: var(--green);
+      text-shadow: 0 0 8px var(--green);
+      letter-spacing: 1px;
+    }
+
+    .timer-value.warning { color: var(--yellow); text-shadow: 0 0 8px var(--yellow); }
+    .timer-value.danger  { color: var(--red);    text-shadow: 0 0 8px var(--red);    animation: blink 0.6s infinite; }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .next-spawn {
+      font-size: 19px;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+
+    /* Alert button */
+    .alert-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      padding: 7px 14px;
+      border-radius: 6px;
+      border: 2px solid;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+    }
+
+    .alert-btn.off {
+      border-color: rgba(255,110,180,0.4);
+      color: rgba(255,110,180,0.5);
+    }
+
+    .alert-btn.on {
+      border-color: var(--green);
+      color: var(--green);
+      text-shadow: 0 0 6px var(--green);
+      box-shadow: 0 0 10px rgba(57,255,20,0.2);
+    }
+
+    .alert-btn:hover { transform: scale(1.05); }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .spawn-times {
+      font-size: 17px;
+      color: var(--light-pink);
+      opacity: 0.6;
+      max-width: 70%;
+      line-height: 1.4;
+    }
+
+    /* Maid bottom */
+    .maid-bottom {
+      display: block;
+      margin: 10px auto 0;
+      width: 100px;
+      opacity: 0.8;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+      color: rgba(255,110,180,0.4);
+    }
+
+    /* SVG maid placeholder */
+    .maid-svg {
+      width: 110px;
+      height: 110px;
+      display: block;
+      margin: 0 auto 12px;
+    }
+
+    /* Responsive */
+    @media(max-width:420px){
+      .timers-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Maid top (SVG inline) -->
+  <svg class="maid-svg" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+    <!-- body -->
+    <ellipse cx="55" cy="85" rx="28" ry="20" fill="#2a0a2a" stroke="#ff6eb4" stroke-width="1.5"/>
+    <!-- apron -->
+    <ellipse cx="55" cy="82" rx="16" ry="13" fill="#fff0f8" opacity=".9"/>
+    <!-- dress -->
+    <rect x="30" y="62" width="50" height="28" rx="8" fill="#1a0520" stroke="#ff6eb4" stroke-width="1.2"/>
+    <!-- collar white -->
+    <path d="M42 65 Q55 72 68 65" stroke="white" stroke-width="2.5" fill="none"/>
+    <!-- neck -->
+    <rect x="49" y="52" width="12" height="14" rx="4" fill="#f9c9e0"/>
+    <!-- head -->
+    <ellipse cx="55" cy="45" rx="20" ry="20" fill="#f9c9e0" stroke="#f7a8cc" stroke-width="1.2"/>
+    <!-- hair back -->
+    <ellipse cx="55" cy="40" rx="21" ry="18" fill="#2d1050"/>
+    <!-- hair front -->
+    <path d="M36 38 Q38 22 55 20 Q72 22 74 38 Q68 28 55 27 Q42 28 36 38Z" fill="#3a1570"/>
+    <!-- side hair -->
+    <path d="M36 38 Q30 50 33 62" stroke="#3a1570" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M74 38 Q80 50 77 62" stroke="#3a1570" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- maid headband -->
+    <path d="M36 36 Q55 28 74 36" stroke="white" stroke-width="3.5" fill="none"/>
+    <!-- bow -->
+    <path d="M46 28 Q55 24 64 28 Q57 32 55 30 Q53 32 46 28Z" fill="white" stroke="#ff6eb4" stroke-width="0.8"/>
+    <!-- eyes -->
+    <ellipse cx="47" cy="44" rx="4" ry="4.5" fill="#6020c0"/>
+    <ellipse cx="63" cy="44" rx="4" ry="4.5" fill="#6020c0"/>
+    <circle cx="47" cy="44" r="2.5" fill="#2a0060"/>
+    <circle cx="63" cy="44" r="2.5" fill="#2a0060"/>
+    <circle cx="48.5" cy="42.5" r="1" fill="white"/>
+    <circle cx="64.5" cy="42.5" r="1" fill="white"/>
+    <!-- blush -->
+    <ellipse cx="41" cy="50" rx="5" ry="2.5" fill="#ffb3cc" opacity=".5"/>
+    <ellipse cx="69" cy="50" rx="5" ry="2.5" fill="#ffb3cc" opacity=".5"/>
+    <!-- mouth -->
+    <path d="M50 54 Q55 58 60 54" stroke="#f06090" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- arms -->
+    <path d="M30 70 Q22 78 25 90" stroke="#f9c9e0" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M80 70 Q88 78 85 90" stroke="#f9c9e0" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <!-- hands -->
+    <circle cx="25" cy="92" r="5" fill="#f9c9e0"/>
+    <circle cx="85" cy="92" r="5" fill="#f9c9e0"/>
+    <!-- sparkles -->
+    <text x="8" y="30" font-size="12" fill="#ff6eb4" opacity=".8">✦</text>
+    <text x="90" y="20" font-size="10" fill="#ffb3d9" opacity=".7">✦</text>
+    <text x="95" y="80" font-size="8"  fill="#ff6eb4" opacity=".6">✦</text>
+  </svg>
+
+  <header>
+    <h1>GPO Boss Timers</h1>
+    <div class="subtitle">Grand Piece Online</div>
+    <div class="sync-info">🕐 Đồng bộ theo GMT+7 (Giờ Việt Nam)</div>
+  </header>
+
+  <div class="live-clock" id="liveClock">
+    00:00:00
+    <span id="liveDate">Thứ 2, 01/01/2026</span>
+  </div>
+
+  <div id="cardsContainer"></div>
+
+  <!-- Bottom maid -->
+  <svg class="maid-svg" style="margin-top:16px;opacity:0.7;transform:scaleX(-1)" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="55" cy="85" rx="28" ry="20" fill="#2a0a2a" stroke="#ff6eb4" stroke-width="1.5"/>
+    <ellipse cx="55" cy="82" rx="16" ry="13" fill="#fff0f8" opacity=".9"/>
+    <rect x="30" y="62" width="50" height="28" rx="8" fill="#1a0520" stroke="#ff6eb4" stroke-width="1.2"/>
+    <path d="M42 65 Q55 72 68 65" stroke="white" stroke-width="2.5" fill="none"/>
+    <rect x="49" y="52" width="12" height="14" rx="4" fill="#f9c9e0"/>
+    <ellipse cx="55" cy="45" rx="20" ry="20" fill="#f9c9e0" stroke="#f7a8cc" stroke-width="1.2"/>
+    <ellipse cx="55" cy="40" rx="21" ry="18" fill="#2d1050"/>
+    <path d="M36 38 Q38 22 55 20 Q72 22 74 38 Q68 28 55 27 Q42 28 36 38Z" fill="#3a1570"/>
+    <path d="M36 38 Q30 50 33 62" stroke="#3a1570" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M74 38 Q80 50 77 62" stroke="#3a1570" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M36 36 Q55 28 74 36" stroke="white" stroke-width="3.5" fill="none"/>
+    <path d="M46 28 Q55 24 64 28 Q57 32 55 30 Q53 32 46 28Z" fill="white" stroke="#ff6eb4" stroke-width="0.8"/>
+    <ellipse cx="47" cy="44" rx="4" ry="4.5" fill="#6020c0"/>
+    <ellipse cx="63" cy="44" rx="4" ry="4.5" fill="#6020c0"/>
+    <circle cx="47" cy="44" r="2.5" fill="#2a0060"/>
+    <circle cx="63" cy="44" r="2.5" fill="#2a0060"/>
+    <circle cx="48.5" cy="42.5" r="1" fill="white"/>
+    <circle cx="64.5" cy="42.5" r="1" fill="white"/>
+    <ellipse cx="41" cy="50" rx="5" ry="2.5" fill="#ffb3cc" opacity=".5"/>
+    <ellipse cx="69" cy="50" rx="5" ry="2.5" fill="#ffb3cc" opacity=".5"/>
+    <path d="M50 54 Q55 58 60 54" stroke="#f06090" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M30 70 Q22 78 25 90" stroke="#f9c9e0" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <path d="M80 70 Q88 78 85 90" stroke="#f9c9e0" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="25" cy="92" r="5" fill="#f9c9e0"/>
+    <circle cx="85" cy="92" r="5" fill="#f9c9e0"/>
+    <text x="8" y="30" font-size="12" fill="#ff6eb4" opacity=".8">✦</text>
+    <text x="90" y="20" font-size="10" fill="#ffb3d9" opacity=".7">✦</text>
+  </svg>
+
+  <footer>✦ GPO Boss Timers VN ✦ Chúc farm vui ✦</footer>
+</div>
+
+<script>
+// =============================================
+// CONFIG: Boss spawn schedules (giờ VN = GMT+7)
+// =============================================
+const BOSSES = [
+  {
+    id: 'brook',
+    name: 'Brook',
+    emoji: '💀',
+    intervalHours: 1,
+    firstSpawn: { h: 5, m: 0 }, // 01:00 GMT+3 = 05:00 VN
+    color: '#00ffff',
+    description: 'Soul King',
+    location: 'Thriller Bark',
+  },
+  {
+    id: 'mihawk',
+    name: 'Mihawk',
+    emoji: '⚔️',
+    intervalHours: 2,
+    firstSpawn: { h: 5, m: 0 }, // 01:00 GMT+3 = 05:00 VN
+    color: '#ff6eb4',
+    description: 'Đại kiếm sĩ',
+    location: 'Mihawk Island',
+  },
+  {
+    id: 'roger',
+    name: 'Roger',
+    emoji: '☠️',
+    intervalHours: 1.5,
+    firstSpawn: { h: 4, m: 0 }, // 00:00 GMT+3 = 04:00 VN
+    color: '#ffe657',
+    description: 'Vua Hải Tặc',
+    location: 'Laugh Tale',
+  },
+];
+
+// Alert state
+const alertState = {};
+BOSSES.forEach(b => alertState[b.id] = false);
+
+// Audio context for alert beep
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playBeep(frequency = 880, duration = 0.3) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = frequency;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+function playAlert() {
+  playBeep(880, 0.2);
+  setTimeout(() => playBeep(1100, 0.2), 250);
+  setTimeout(() => playBeep(880, 0.4), 500);
+}
+
+// Alerted set (so we don't re-alert every second)
+const alerted = {};
+BOSSES.forEach(b => alerted[b.id] = false);
+
+// Giờ Việt Nam (GMT+7): dùng các hàm getUTC* trên đối tượng này,
+// không phụ thuộc múi giờ của trình duyệt.
+function getVNDate() {
+  return new Date(Date.now() + 7 * 3600000);
+}
+
+// Các mốc spawn quanh hiện tại (từ hôm qua đến ngày mai), neo theo 00:00 VN
+function getSpawnTimesToday(boss) {
+  const vn = getVNDate();
+  const dayStart = Date.UTC(vn.getUTCFullYear(), vn.getUTCMonth(), vn.getUTCDate());
+  const anchor = dayStart + (boss.firstSpawn.h * 60 + boss.firstSpawn.m) * 60000;
+  const intervalMs = boss.intervalHours * 3600000;
+
+  let t = anchor + Math.floor((dayStart - intervalMs - anchor) / intervalMs) * intervalMs;
+  const limit = dayStart + 48 * 3600000;
+  const times = [];
+  while (t <= limit) {
+    times.push(new Date(t));
+    t += intervalMs;
+  }
+  return times;
+}
+
+function getNextAndPrevSpawn(boss) {
+  const now = getVNDate();
+  const times = getSpawnTimesToday(boss);
+
+  let next = null, prev = null;
+  for (const t of times) {
+    if (t > now) { next = t; break; }
+    prev = t;
+  }
+
+  return { next, prev };
+}
+
+function formatCountdown(ms) {
+  if (ms < 0) ms = 0;
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function formatTime(date) {
+  if (!date) return '--:--';
+  const h = String(date.getUTCHours()).padStart(2,'0');
+  const m = String(date.getUTCMinutes()).padStart(2,'0');
+  return `${h}:${m}`;
+}
+
+function msSince(date) {
+  return getVNDate() - date;
+}
+
+function msUntil(date) {
+  return date - getVNDate();
+}
+
+// Day names
+const DAYS = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+
+// Build cards once
+function buildCards() {
+  const container = document.getElementById('cardsContainer');
+  container.innerHTML = '';
+  BOSSES.forEach(boss => {
+    const card = document.createElement('div');
+    card.className = 'boss-card';
+    card.id = `card-${boss.id}`;
+    card.innerHTML = `
+      <div class="boss-header">
+        <div>
+          <div class="boss-name">${boss.emoji} ${boss.name}</div>
+          <div class="boss-schedule" style="color:${boss.color}">📍 ${boss.location} &nbsp;·&nbsp; ${boss.description}</div>
+        </div>
+        <div class="boss-schedule" id="schedule-${boss.id}">Mỗi ${formatInterval(boss.intervalHours)}</div>
+      </div>
+      <div class="timers-row">
+        <div class="timer-block">
+          <div class="timer-label">⏳ Còn lại</div>
+          <div class="timer-value" id="next-${boss.id}">--:--:--</div>
+        </div>
+      </div>
+      <div class="next-spawn" id="nexttime-${boss.id}">Spawn tiếp theo: --:--</div>
+      <div class="card-footer">
+        <div class="spawn-times" id="spawntimes-${boss.id}"></div>
+        <button class="alert-btn off" id="alertbtn-${boss.id}" onclick="toggleAlert('${boss.id}')">
+          🔔 ALERT OFF
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+    updateSpawnList(boss);
+  });
+}
+
+function formatInterval(h) {
+  if (h === Math.floor(h)) return `${h}h`;
+  const whole = Math.floor(h);
+  const mins = Math.round((h - whole) * 60);
+  return `${whole}h${mins}p`;
+}
+
+function updateSpawnList(boss) {
+  const times = getSpawnTimesToday(boss);
+  const now = getVNDate();
+  const upcoming = times.filter(t => t > now).slice(0, 5);
+  const el = document.getElementById(`spawntimes-${boss.id}`);
+  if (el) {
+    el.textContent = 'Spawn hôm nay: ' + upcoming.map(t => formatTime(t)).join(' · ');
+  }
+}
+
+function toggleAlert(bossId) {
+  alertState[bossId] = !alertState[bossId];
+  const btn = document.getElementById(`alertbtn-${bossId}`);
+  if (alertState[bossId]) {
+    btn.className = 'alert-btn on';
+    btn.textContent = '🔔 ALERT ON';
+    // Unlock audio
+    try { getAudioCtx().resume(); } catch(e){}
+    playBeep(660, 0.1);
+  } else {
+    btn.className = 'alert-btn off';
+    btn.textContent = '🔔 ALERT OFF';
+  }
+}
+
+// Update clock & timers
+function tick() {
+  const vn = getVNDate();
+
+  // Clock
+  const h = String(vn.getUTCHours()).padStart(2,'0');
+  const m = String(vn.getUTCMinutes()).padStart(2,'0');
+  const s = String(vn.getUTCSeconds()).padStart(2,'0');
+  document.getElementById('liveClock').childNodes[0].textContent = `${h}:${m}:${s}`;
+
+  const day = DAYS[vn.getUTCDay()];
+  const date = `${String(vn.getUTCDate()).padStart(2,'0')}/${String(vn.getUTCMonth()+1).padStart(2,'0')}/${vn.getUTCFullYear()}`;
+  document.getElementById('liveDate').textContent = `${day}, ${date}`;
+
+  // Bosses
+  BOSSES.forEach(boss => {
+    const { next } = getNextAndPrevSpawn(boss);
+    const nextEl  = document.getElementById(`next-${boss.id}`);
+    const nexttimeEl = document.getElementById(`nexttime-${boss.id}`);
+
+    if (next) {
+      const msLeft = msUntil(next);
+      const cd = formatCountdown(msLeft);
+
+      // Color warning
+      if (msLeft < 60000) {
+        nextEl.className = 'timer-value danger';
+      } else if (msLeft < 5 * 60000) {
+        nextEl.className = 'timer-value warning';
+      } else {
+        nextEl.className = 'timer-value';
+      }
+      nextEl.textContent = cd;
+      nexttimeEl.textContent = `Spawn tiếp theo: ${formatTime(next)}`;
+
+      // Alert at 1 minute
+      if (alertState[boss.id] && msLeft < 60000 && !alerted[boss.id]) {
+        alerted[boss.id] = true;
+        playAlert();
+        // Show browser notification if granted
+        if (Notification.permission === 'granted') {
+          new Notification(`GPO: ${boss.name} sắp spawn!`, {
+            body: `${boss.name} spawn tại ${boss.location} sau ít hơn 1 phút!`,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">☠️</text></svg>',
+            silent: true,
+          });
+        }
+      }
+      // Reset alerted after spawn
+      if (msLeft > 90000) alerted[boss.id] = false;
+    } else {
+      nextEl.textContent = '--:--:--';
+      nexttimeEl.textContent = 'Không tìm thấy spawn tiếp theo';
+    }
+
+    updateSpawnList(boss);
+  });
+}
+
+// Request notification permission on load
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+
+buildCards();
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
