@@ -231,9 +231,8 @@
 
     /* SVG maid placeholder */
     .maid-svg {
-      filter: grayscale(1) brightness(0.9);
-      width: 64px;
-      height: 64px;
+      width: 72px;
+      height: 72px;
       display: block;
       margin: 0 auto 4px;
     }
@@ -247,53 +246,35 @@
 <body>
 <div class="wrapper">
 
-  <!-- Maid top (SVG inline) -->
-  <svg class="maid-svg" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
-    <!-- body -->
-    <ellipse cx="55" cy="85" rx="28" ry="20" fill="#2a0a2a" stroke="#ff6eb4" stroke-width="1.5"/>
-    <!-- apron -->
-    <ellipse cx="55" cy="82" rx="16" ry="13" fill="#fff0f8" opacity=".9"/>
-    <!-- dress -->
-    <rect x="30" y="62" width="50" height="28" rx="8" fill="#1a0520" stroke="#ff6eb4" stroke-width="1.2"/>
-    <!-- collar white -->
-    <path d="M42 65 Q55 72 68 65" stroke="white" stroke-width="2.5" fill="none"/>
-    <!-- neck -->
-    <rect x="49" y="52" width="12" height="14" rx="4" fill="#f9c9e0"/>
-    <!-- head -->
-    <ellipse cx="55" cy="45" rx="20" ry="20" fill="#f9c9e0" stroke="#f7a8cc" stroke-width="1.2"/>
-    <!-- hair back -->
-    <ellipse cx="55" cy="40" rx="21" ry="18" fill="#2d1050"/>
-    <!-- hair front -->
-    <path d="M36 38 Q38 22 55 20 Q72 22 74 38 Q68 28 55 27 Q42 28 36 38Z" fill="#3a1570"/>
-    <!-- side hair -->
-    <path d="M36 38 Q30 50 33 62" stroke="#3a1570" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <path d="M74 38 Q80 50 77 62" stroke="#3a1570" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <!-- maid headband -->
-    <path d="M36 36 Q55 28 74 36" stroke="white" stroke-width="3.5" fill="none"/>
-    <!-- bow -->
-    <path d="M46 28 Q55 24 64 28 Q57 32 55 30 Q53 32 46 28Z" fill="white" stroke="#ff6eb4" stroke-width="0.8"/>
-    <!-- eyes -->
-    <ellipse cx="47" cy="44" rx="4" ry="4.5" fill="#6020c0"/>
-    <ellipse cx="63" cy="44" rx="4" ry="4.5" fill="#6020c0"/>
-    <circle cx="47" cy="44" r="2.5" fill="#2a0060"/>
-    <circle cx="63" cy="44" r="2.5" fill="#2a0060"/>
-    <circle cx="48.5" cy="42.5" r="1" fill="white"/>
-    <circle cx="64.5" cy="42.5" r="1" fill="white"/>
-    <!-- blush -->
-    <ellipse cx="41" cy="50" rx="5" ry="2.5" fill="#ffb3cc" opacity=".5"/>
-    <ellipse cx="69" cy="50" rx="5" ry="2.5" fill="#ffb3cc" opacity=".5"/>
-    <!-- mouth -->
-    <path d="M50 54 Q55 58 60 54" stroke="#f06090" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- arms -->
-    <path d="M30 70 Q22 78 25 90" stroke="#f9c9e0" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <path d="M80 70 Q88 78 85 90" stroke="#f9c9e0" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <!-- hands -->
-    <circle cx="25" cy="92" r="5" fill="#f9c9e0"/>
-    <circle cx="85" cy="92" r="5" fill="#f9c9e0"/>
-    <!-- sparkles -->
-    <text x="8" y="30" font-size="12" fill="#ff6eb4" opacity=".8">✦</text>
-    <text x="90" y="20" font-size="10" fill="#ffb3d9" opacity=".7">✦</text>
-    <text x="95" y="80" font-size="8"  fill="#ff6eb4" opacity=".6">✦</text>
+  <!-- Đầu lâu + kiếm chéo -->
+  <svg class="maid-svg" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg" aria-label="Đầu lâu và kiếm">
+    <!-- kiếm chéo -->
+    <g stroke-linecap="round">
+      <line x1="16" y1="18" x2="94" y2="96" stroke="#6b7280" stroke-width="6"/>
+      <line x1="94" y1="18" x2="16" y2="96" stroke="#6b7280" stroke-width="6"/>
+      <line x1="16" y1="18" x2="94" y2="96" stroke="#d1d5db" stroke-width="2.5"/>
+      <line x1="94" y1="18" x2="16" y2="96" stroke="#d1d5db" stroke-width="2.5"/>
+      <!-- chắn kiếm -->
+      <line x1="74" y1="76" x2="86" y2="64" stroke="#9ca3af" stroke-width="5"/>
+      <line x1="36" y1="76" x2="24" y2="64" stroke="#9ca3af" stroke-width="5"/>
+      <!-- cán kiếm -->
+      <line x1="86" y1="90" x2="98" y2="102" stroke="#4b5563" stroke-width="7"/>
+      <line x1="24" y1="90" x2="12" y2="102" stroke="#4b5563" stroke-width="7"/>
+    </g>
+    <!-- đầu lâu -->
+    <path d="M55 14 C34 14 26 29 26 43 C26 53 31 59 37 63 L37 72 Q37 76 41 76 L69 76 Q73 76 73 72 L73 63 C79 59 84 53 84 43 C84 29 76 14 55 14Z" fill="#e5e7eb" stroke="#111" stroke-width="2"/>
+    <!-- hốc mắt -->
+    <ellipse cx="44" cy="45" rx="8" ry="9" fill="#0a0a0a"/>
+    <ellipse cx="66" cy="45" rx="8" ry="9" fill="#0a0a0a"/>
+    <!-- mũi -->
+    <path d="M55 52 L50 62 L60 62Z" fill="#0a0a0a"/>
+    <!-- răng -->
+    <g stroke="#111" stroke-width="1.5">
+      <line x1="45" y1="68" x2="45" y2="76"/>
+      <line x1="52" y1="68" x2="52" y2="76"/>
+      <line x1="58" y1="68" x2="58" y2="76"/>
+      <line x1="65" y1="68" x2="65" y2="76"/>
+    </g>
   </svg>
 
   <header>
