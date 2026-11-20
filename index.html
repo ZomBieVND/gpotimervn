@@ -7,17 +7,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --pink: #ff6eb4;
-      --light-pink: #ffb3d9;
-      --dark-pink: #cc3380;
+      --pink: #9ca3af;
+      --light-pink: #d1d5db;
+      --dark-pink: #4b5563;
       --bg: #1a0a1a;
       --card-bg: #0a0a0a;
-      --border: #ff6eb4;
-      --text: #ffe0f0;
-      --green: #39ff14;
-      --yellow: #ffe657;
-      --cyan: #00ffff;
-      --red: #ff4444;
+      --border: #6b7280;
+      --text: #e5e7eb;
+      --green: #e2e8f0;
+      --yellow: #fbbf24;
+      --cyan: #94a3b8;
+      --red: #ef4444;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,7 +54,7 @@
       font-family: 'Press Start 2P', monospace;
       font-size: clamp(14px, 3vw, 20px);
       color: var(--pink);
-      text-shadow: 0 0 10px var(--pink), 0 0 20px var(--dark-pink);
+      text-shadow: 0 0 8px rgba(156,163,175,0.35);
       letter-spacing: 2px;
       margin-bottom: 4px;
       line-height: 1.4;
@@ -68,7 +68,7 @@
 
     .sync-info {
       display: inline-block;
-      background: rgba(255,110,180,0.15);
+      background: rgba(156,163,175,0.15);
       border: 1px solid var(--pink);
       border-radius: 20px;
       padding: 4px 16px;
@@ -82,8 +82,8 @@
       text-align: center;
       margin-bottom: 12px;
       font-size: 30px;
-      color: var(--yellow);
-      text-shadow: 0 0 8px var(--yellow);
+      color: #f3f4f6;
+      text-shadow: 0 0 8px rgba(243,244,246,0.25);
       letter-spacing: 2px;
     }
 
@@ -140,7 +140,7 @@
 
     .timer-block {
       background: #000;
-      border: 1px solid rgba(255,110,180,0.3);
+      border: 1px solid rgba(156,163,175,0.3);
       border-radius: 8px;
       padding: 10px 12px;
       text-align: center;
@@ -185,15 +185,15 @@
     }
 
     .alert-btn.off {
-      border-color: rgba(255,110,180,0.4);
-      color: rgba(255,110,180,0.5);
+      border-color: rgba(156,163,175,0.4);
+      color: rgba(156,163,175,0.5);
     }
 
     .alert-btn.on {
       border-color: var(--green);
       color: var(--green);
       text-shadow: 0 0 6px var(--green);
-      box-shadow: 0 0 10px rgba(57,255,20,0.2);
+      box-shadow: 0 0 10px rgba(226,232,240,0.2);
     }
 
     .alert-btn:hover { transform: scale(1.05); }
@@ -226,11 +226,12 @@
       text-align: center;
       margin-top: 12px;
       font-size: 16px;
-      color: rgba(255,110,180,0.4);
+      color: rgba(156,163,175,0.4);
     }
 
     /* SVG maid placeholder */
     .maid-svg {
+      filter: grayscale(1) brightness(0.9);
       width: 64px;
       height: 64px;
       display: block;
@@ -322,7 +323,7 @@ const BOSSES = [
     emoji: '💀',
     intervalHours: 1,
     firstSpawn: { h: 5, m: 0 }, // 01:00 GMT+3 = 05:00 VN
-    color: '#00ffff',
+    color: '#94a3b8',
     description: 'Soul King',
     location: 'Thriller Bark',
   },
@@ -332,7 +333,7 @@ const BOSSES = [
     emoji: '⚔️',
     intervalHours: 2,
     firstSpawn: { h: 5, m: 0 }, // 01:00 GMT+3 = 05:00 VN
-    color: '#ff6eb4',
+    color: '#cbd5e1',
     description: 'Đại kiếm sĩ',
     location: 'Mihawk Island',
   },
@@ -342,7 +343,7 @@ const BOSSES = [
     emoji: '☠️',
     intervalHours: 1.5,
     firstSpawn: { h: 4, m: 0 }, // 00:00 GMT+3 = 04:00 VN
-    color: '#ffe657',
+    color: '#e2e8f0',
     description: 'Vua Hải Tặc',
     location: 'Laugh Tale',
   },
